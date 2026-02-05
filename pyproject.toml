@@ -1,0 +1,149 @@
+[project]
+name = "llm-ta-aied26"
+version = "0.1.0"
+description = "Multi-agent LLM system for CAD (teacher Audio Discourse)"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "transformers>=4.30.0",
+    "accelerate>=0.20.0",
+    "pandas>=1.5.0",
+    "numpy>=1.23.0",
+]
+authors = [
+    {name = "bahar"}
+]
+keywords = ["nlp", "education", "classroom-discourse", "multi-agent", "llm"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Education",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.0.0",
+  "pytest-cov>=4.0.0",
+  "black>=23.0.0",
+  "ruff>=0.1.0",
+  "mypy>=1.0.0",
+]
+
+cpu = [
+  "torch>=2.0.0",
+  "torchvision",
+  "torchaudio",
+]
+
+cu128 = [
+  "torch>=2.0.0",
+  "torchvision",
+  "torchaudio",
+]
+
+gpu = [
+  "bitsandbytes>=0.40.0",
+]
+[project.urls]
+Homepage = "https://github.com/bshahrok/llm-ta-aied26.git"
+Repository = "https://github.com/bshahrok/llm-ta-aied26"
+Issues = "https://github.com/bshahrok/llm-ta-aied26/issues"
+
+[build-system]
+requires = ["uv_build>=0.9.11,<0.10.0"]
+build-backend = "uv_build"
+
+# ============================================================================
+# Tool Configurations
+# ============================================================================
+
+[tool.black]
+line-length = 88
+target-version = ['py310', 'py311']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "-ra",
+    "--cov=src",
+    "--cov=utils",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "gpu: marks tests that require GPU",
+]
+
+[tool.coverage.run]
+source = ["src", "utils"]
+omit = [
+    "*/tests/*",
+    "*/test_*.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
+]
+[tool.uv]
+conflicts = [
+  [{ extra = "cpu" }, { extra = "cu128" }],
+]
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cpu",  extra = "cpu" },
+  { index = "pytorch-cu128", extra = "cu128" },
+]
+torchvision = [
+  { index = "pytorch-cpu",  extra = "cpu" },
+  { index = "pytorch-cu128", extra = "cu128" },
+]
+torchaudio = [
+  { index = "pytorch-cpu",  extra = "cpu" },
+  { index = "pytorch-cu128", extra = "cu128" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
